@@ -1,22 +1,39 @@
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { combineReducers, createStore } from 'redux';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import logger from 'redux-logger';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import phonebookReducer from './phonebook-reducer';
-// const initialState = {
-//   contacts: {
-//     items: [],
-//     filter: '',
-//   },
-// };
-// const reducer = (state = initialState, action) => {
-//   console.log('Лог экшена в редьюсер:', action);
-//   return state;
-// };
-// const store = createStore(reducer);
 
-const rootReducer = combineReducers({
-  contacts: phonebookReducer,
+const middleware = [
+  ...getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }),
+  logger,
+];
+
+const contactsPersistConfig = {
+  key: 'contacts',
+  storage,
+  blacklist: ['filter'],
+};
+
+export const store = configureStore({
+  reducer: {
+    contacts: persistReducer(contactsPersistConfig, phonebookReducer),
+  },
+  middleware: middleware,
+  devTools: process.env.NODE_ENV === 'development',
 });
 
-const store = createStore(rootReducer, composeWithDevTools());
-
-export default store;
+export const persistor = persistStore(store);

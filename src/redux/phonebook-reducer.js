@@ -1,33 +1,37 @@
-// {
-//   contacts: {
-//     items: [],
-//     filter: ''
-//   }
-// }
-
+import { createReducer } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
-import types from './phonebook-types';
+import phonebookActions from './phonebook-actions';
 
-const items = (state = [], { type, payload }) => {
-  switch (type) {
-    case types.ADD:
-      return [...state, payload];
+const items = createReducer([], {
+  [phonebookActions.addContact]: (state, { payload }) => [...state, payload],
+  [phonebookActions.deleteContact]: (state, { payload }) =>
+    state.filter(contact => contact.id !== payload),
+});
 
-    case types.DELETE:
-      return state.filter(contact => contact.id !== payload);
+const filter = createReducer('', {
+  [phonebookActions.changeFilter]: (_, { payload }) => payload,
+});
 
-    default:
-      return state;
-  }
-};
-const filter = (state = '', { type, payload }) => {
-  switch (type) {
-    case types.CHANGE_FILTER:
-      return payload;
-    default:
-      return state;
-  }
-};
+// const items = (state = [], { type, payload }) => {
+//   switch (type) {
+//     case types.ADD:
+//       return [...state, payload];
+
+//     case types.DELETE:
+//       return state.filter(contact => contact.id !== payload);
+
+//     default:
+//       return state;
+//   }
+// };
+// const filter = (state = '', { type, payload }) => {
+//   switch (type) {
+//     case 'contacts/changeFilter':
+//       return payload;
+//     default:
+//       return state;
+//   }
+// };
 
 export default combineReducers({
   items,

@@ -21,15 +21,6 @@ const ContactList = ({ contacts, onDeleteContact }) => {
   );
 };
 
-// ContactList.propTypes = {
-//   contacts: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       id: PropTypes.string.isRequired,
-//     }),
-//   ).isRequired,
-//   onClick: PropTypes.func,
-// };
-
 // const filterContacts = () => {
 //   const normalizedFilter = filter.toLowerCase();
 //   return contacts.filter(contact =>
@@ -73,3 +64,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+
+// ContactList.propTypes = {
+//   contacts: PropTypes.arrayOf(
+//     PropTypes.shape({
+//       id: PropTypes.string.isRequired,
+//     }),
+//   ).isRequired,
+//   onClick: PropTypes.func,
+// };
