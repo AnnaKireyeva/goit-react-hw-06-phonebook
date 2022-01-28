@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import styles from './AddContactForm.module.css';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import phonebookActions from '../../redux/phonebook-actions';
+import { getContacts } from '../../redux/phonebook-selectors';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-function AddContactForm({ onSubmit }) {
+function AddContactForm() {
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -23,7 +28,23 @@ function AddContactForm({ onSubmit }) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ name, number });
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase(),
+      )
+    ) {
+      toast.warning(`Name '${name}' is already in contacts`);
+      reset();
+      return;
+    }
+
+    if (contacts.find(contact => contact.number.toLowerCase() === number)) {
+      toast.warning(`Number '${number}' is already in contacts`);
+      reset();
+      return;
+    }
+
+    dispatch(phonebookActions.addContact({ name, number }));
     reset();
   };
 
@@ -67,11 +88,4 @@ function AddContactForm({ onSubmit }) {
   );
 }
 
-AddContactForm.propTypes = {
-  onSubmit: PropTypes.func,
-};
-const mapDispatchToProps = dispatch => ({
-  onSubmit: newContact => dispatch(phonebookActions.addContact(newContact)),
-});
-
-export default connect(null, mapDispatchToProps)(AddContactForm);
+export default AddContactForm;
